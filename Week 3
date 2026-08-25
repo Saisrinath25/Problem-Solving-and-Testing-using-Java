@@ -1,0 +1,392 @@
+1. Date and Time Handling Concepts
+1.1 Java Date and Time – HackerRank
+Problem
+Given a date, find the day of the week.
+Java Solution
+import java.time.LocalDate;
+import java.time.format.TextStyle;
+import java.util.Locale;
+import java.util.Scanner;
+ 
+public class Solution {
+ 
+   public static void main(String[] args) {
+ 
+       Scanner sc = new Scanner(System.in);
+ 
+       int month = sc.nextInt();
+       int day = sc.nextInt();
+       int year = sc.nextInt();
+ 
+       LocalDate date = LocalDate.of(year, month, day);
+ 
+       String dayName = date.getDayOfWeek()
+                            .getDisplayName(
+                                TextStyle.FULL,
+                                Locale.ENGLISH
+                            );
+ 
+       System.out.println(dayName.toUpperCase());
+   }
+}
+Example
+Input:
+08 24 2026
+ 
+Output:
+MONDAY
+Important Java Classes
+LocalDate
+DayOfWeek
+TextStyle
+Locale
+LocalDate.of() creates a date, and getDayOfWeek() finds the corresponding day.
+
+2. Number of Days Between Two Dates – LeetCode
+Java Solution
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+ 
+class Solution {
+ 
+   public int daysBetweenDates(String date1, String date2) {
+ 
+       LocalDate d1 = LocalDate.parse(date1);
+       LocalDate d2 = LocalDate.parse(date2);
+ 
+       return (int) Math.abs(
+           ChronoUnit.DAYS.between(d1, d2)
+       );
+   }
+}
+Example
+Input:
+date1 = "2019-06-29"
+date2 = "2019-06-30"
+ 
+Output:
+1
+Explanation
+ChronoUnit.DAYS.between(d1, d2)
+calculates the number of days between two dates.
+Time Complexity: O(1)
+
+3. Collection Processing & Transformation
+3.1 Java Priority Queue – HackerRank
+The HackerRank problem uses a priority queue to process student events.
+Java Solution
+import java.util.*;
+ 
+class Student {
+   String name;
+   double cgpa;
+   int id;
+ 
+   Student(String name, double cgpa, int id) {
+       this.name = name;
+       this.cgpa = cgpa;
+       this.id = id;
+   }
+}
+ 
+class Priorities {
+ 
+   public List<Student> getStudents(List<String> events) {
+ 
+       PriorityQueue<Student> pq = new PriorityQueue<>(
+           (a, b) -> {
+               int cmp = Double.compare(b.cgpa, a.cgpa);
+ 
+               if (cmp != 0)
+                   return cmp;
+ 
+               cmp = a.name.compareTo(b.name);
+ 
+               if (cmp != 0)
+                   return cmp;
+ 
+               return Integer.compare(a.id, b.id);
+           }
+       );
+ 
+       for (String event : events) {
+ 
+           String[] parts = event.split(" ");
+ 
+           if (parts[0].equals("ENTER")) {
+ 
+               String name = parts[1];
+               double cgpa = Double.parseDouble(parts[2]);
+               int id = Integer.parseInt(parts[3]);
+ 
+               pq.add(new Student(name, cgpa, id));
+ 
+           } else if (parts[0].equals("SERVED")) {
+ 
+               if (!pq.isEmpty()) {
+                   pq.poll();
+               }
+           }
+       }
+ 
+       List<Student> result = new ArrayList<>();
+ 
+       while (!pq.isEmpty()) {
+           result.add(pq.poll());
+       }
+ 
+       return result;
+   }
+}
+Priority Order
+Students are served according to:
+1. Highest CGPA
+2. Alphabetically smaller name
+3. Smaller ID
+Important Concept
+PriorityQueue<Student>
+automatically keeps the highest-priority student ready at the head of the queue.
+
+4. Java ArrayList – HackerRank
+Java Solution
+import java.util.*;
+ 
+public class Solution {
+ 
+   public static void main(String[] args) {
+ 
+       Scanner sc = new Scanner(System.in);
+ 
+       int n = sc.nextInt();
+ 
+       ArrayList<ArrayList<Integer>> list =
+           new ArrayList<>();
+ 
+       for (int i = 0; i < n; i++) {
+ 
+           int d = sc.nextInt();
+ 
+           ArrayList<Integer> row =
+               new ArrayList<>();
+ 
+           for (int j = 0; j < d; j++) {
+               row.add(sc.nextInt());
+           }
+ 
+           list.add(row);
+       }
+ 
+       int q = sc.nextInt();
+ 
+       while (q-- > 0) {
+ 
+           int x = sc.nextInt();
+           int y = sc.nextInt();
+ 
+           if (x <= list.size() &&
+               y <= list.get(x - 1).size()) {
+ 
+               System.out.println(
+                   list.get(x - 1).get(y - 1)
+               );
+ 
+           } else {
+               System.out.println("ERROR!");
+           }
+       }
+   }
+}
+Example
+Input:
+5
+5 41 77 74 22 44
+1 12
+4 37 34 36 52
+0
+3 20 22 33
+5
+1 3
+3 4
+3 1
+4 3
+5 3
+Output:
+74
+52
+37
+ERROR!
+33
+Important Methods
+add()
+get()
+size()
+
+5. Custom Comparators
+5.1 Largest Number – LeetCode
+Problem
+Arrange numbers so that they form the largest possible number.
+Java Solution
+import java.util.*;
+ 
+class Solution {
+ 
+   public String largestNumber(int[] nums) {
+ 
+       String[] arr = new String[nums.length];
+ 
+       for (int i = 0; i < nums.length; i++) {
+           arr[i] = String.valueOf(nums[i]);
+       }
+ 
+       Arrays.sort(arr, (a, b) ->
+           (b + a).compareTo(a + b)
+       );
+ 
+       if (arr[0].equals("0")) {
+           return "0";
+       }
+ 
+       StringBuilder result = new StringBuilder();
+ 
+       for (String s : arr) {
+           result.append(s);
+       }
+ 
+       return result.toString();
+   }
+}
+Example
+Input:
+[10, 2]
+ 
+Output:
+"210"
+Because:
+2 + 10 = "210"
+10 + 2 = "102"
+Therefore, 2 should come before 10.
+Another Example
+Input:
+[3,30,34,5,9]
+ 
+Output:
+"9534330"
+Main Comparator Logic
+(b + a).compareTo(a + b)
+This decides which number should appear first.
+
+6. Java Comparator – HackerRank
+Java Solution
+import java.util.*;
+ 
+class Student {
+   int id;
+   String name;
+   double cgpa;
+ 
+   Student(int id, String name, double cgpa) {
+       this.id = id;
+       this.name = name;
+       this.cgpa = cgpa;
+   }
+}
+ 
+class Checker implements Comparator<Student> {
+ 
+   public int compare(Student a, Student b) {
+ 
+       // Higher CGPA first
+       int result = Double.compare(b.cgpa, a.cgpa);
+ 
+       if (result != 0)
+           return result;
+ 
+       // Alphabetical name
+       result = a.name.compareTo(b.name);
+ 
+       if (result != 0)
+           return result;
+ 
+       // Lower ID first
+       return Integer.compare(a.id, b.id);
+   }
+}
+Sorting Priority
+1. Higher CGPA
+2. Alphabetical name
+3. Lower ID
+For example:
+Student A → CGPA 9.2
+Student B → CGPA 8.9
+Student C → CGPA 8.9
+Student A comes first because of the highest CGPA.
+
+7. Custom Comparators & Sorting Logic
+7.1 Task 2 in Syllabus
+If Task 2 refers to a custom sorting problem, the following is a simple example that demonstrates the concept.
+Sort integers in descending order
+import java.util.*;
+ 
+public class Main {
+ 
+   public static void main(String[] args) {
+ 
+       Integer[] arr = {5, 2, 8, 1, 9, 3};
+ 
+       Arrays.sort(arr, (a, b) -> b - a);
+ 
+       System.out.println(Arrays.toString(arr));
+   }
+}
+Output
+[9, 8, 5, 3, 2, 1]
+The lambda expression:
+(a, b) -> b - a
+creates a custom comparator for descending order.
+
+8. Sort the People – LeetCode
+Problem
+Sort people's names according to their heights in descending order.
+Java Solution
+import java.util.*;
+ 
+class Solution {
+ 
+   public String[] sortPeople(String[] names, int[] heights) {
+ 
+       Integer[] index = new Integer[names.length];
+ 
+       for (int i = 0; i < names.length; i++) {
+           index[i] = i;
+       }
+ 
+       Arrays.sort(index, (a, b) ->
+           Integer.compare(heights[b], heights[a])
+       );
+ 
+       String[] result = new String[names.length];
+ 
+       for (int i = 0; i < names.length; i++) {
+           result[i] = names[index[i]];
+       }
+ 
+       return result;
+   }
+}
+Example
+Input:
+ 
+names = ["Mary","John","Emma"]
+heights = [180,165,170]
+ 
+Output:
+ 
+["Mary","Emma","John"]
+Explanation
+Heights:
+Mary  → 180
+Emma  → 170
+John  → 165
+So the descending order is:
+Mary → Emma → John
+ 
